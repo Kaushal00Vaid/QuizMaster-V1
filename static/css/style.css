@@ -142,3 +142,24 @@ h1 {
   height: 17px;
   opacity: 1;
 }
+
+/* 404 Not Found */
+.notFound {
+  background-color: #f8ece4;
+  width: 100vw;
+  height: 100vh;
+}
+.notFound img {
+  width: 20%;
+  margin: 0 40%;
+  margin-top: 20px;
+}
+.notFound-message {
+  margin-top: 20px;
+  text-align: center;
+}
+.notFound-message p {
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  margin-top: 15px;
+}

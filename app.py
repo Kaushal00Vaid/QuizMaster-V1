@@ -13,4 +13,9 @@ def signup():
 def login():
     return render_template('login.html')
 
+# Define your 404 error handler
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('NotFound.html'), 404
+
 app.run(debug=True)
