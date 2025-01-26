@@ -1,0 +1,127 @@
+{% extends "boilerplate.html" %} {% block body %}
+
+<div class="signup">
+  <div class="container">
+    <div class="row text-center total-signup mt-5">
+      <div class="col-6 p-5 left-outer-div">
+        <div class="left-inner">
+          <h1>Welcome to <span class="title">Gradely!</span></h1>
+          <p class="text-muted signup-msg">
+            Master your exams with Gradely. Sign up to get started.
+          </p>
+          <form>
+            <div class="mt-5 signup-form">
+              <label for="username" class="form-label"></label>
+              <input
+                type="email"
+                class="form-control signup-input-fields"
+                id="username"
+                placeholder="Username(E-mail)"
+              />
+            </div>
+            <div class="signup-form password-container">
+              <label for="password" class="form-label"></label>
+              <input
+                type="password"
+                class="form-control signup-input-fields"
+                id="password"
+                placeholder="Password"
+              />
+              <button
+                class="toggle-visibility"
+                onclick="togglePassword()"
+                type="button"
+              >
+                <svg
+                  id="eye-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.822 2.492-3.002 4.872-6.138 6.29C13.113 19.5 11.568 20 12 20c-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="signup-form">
+              <label for="fullname" class="form-label"></label>
+              <input
+                type="text"
+                class="form-control signup-input-fields"
+                id="fullname"
+                placeholder="Full Name"
+              />
+            </div>
+            <div class="signup-form">
+              <label for="qualification" class="form-label"></label>
+              <input
+                type="text"
+                class="form-control signup-input-fields"
+                id="qualification"
+                placeholder="Qualification"
+              />
+            </div>
+            <div class="signup-form">
+              <label for="DOB" class="form-label"></label>
+              <input
+                type="date"
+                class="form-control signup-input-fields"
+                id="DOB"
+                placeholder="Date of Birth"
+              />
+            </div>
+            <button type="submit" class="mt-5 signup-btn">SignUp</button>
+            <p class="text-center mt-3">
+              Already a member? <a href="/login"><b>Login now</b></a>
+            </p>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-6 right-outer-div mt-5">
+        <div class="right-inner-div">
+          <img
+            src="../static/assets/monitor illustration.svg"
+            class="right-img"
+          />
+          <h5>
+            Keep practicing, keep progressing—success is just a quiz away!
+          </h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function togglePassword() {
+    const passwordInput = document.getElementById("password");
+    const eyeIcon = document.getElementById("eye-icon");
+    const isPassword = passwordInput.type === "password";
+
+    // Toggle input type
+    passwordInput.type = isPassword ? "text" : "password";
+
+    // Change the icon (optional)
+    if (isPassword) {
+      eyeIcon.innerHTML = `
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825c2.175-1.095 3.885-2.955 5.063-5.118 1.113-2.045 1.113-4.564 0-6.608-1.178-2.163-2.888-4.023-5.063-5.118a11.964 11.964 0 00-3.875-.675 11.964 11.964 0 00-3.875.675c-2.175 1.095-3.885 2.955-5.063 5.118-1.113 2.045-1.113 4.564 0 6.608 1.178 2.163 2.888 4.023 5.063 5.118a11.964 11.964 0 003.875.675c1.314 0 2.616-.235 3.875-.675zM12 15a3 3 0 100-6 3 3 0 000 6z" />`;
+    } else {
+      eyeIcon.innerHTML = `
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.822 2.492-3.002 4.872-6.138 6.29C13.113 19.5 11.568 20 12 20c-4.477 0-8.268-2.943-9.542-7z" />`;
+    }
+  }
+</script>
+
+{% endblock %}

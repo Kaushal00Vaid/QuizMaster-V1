@@ -1,0 +1,97 @@
+{% extends "boilerplate.html" %} {% block body %}
+
+<div class="login">
+  <div class="container">
+    <div class="row text-center total-signup mt-5">
+      <div class="col-6 left-outer-div-login mt-5">
+        <div class="right-inner-div">
+          <img src="../static/assets/Ai_Robot_3.svg" class="left-img-login" />
+          <h5>Eat. Practice. Sleep. Repeat.</h5>
+        </div>
+      </div>
+      <div class="col-6 p-5 right-outer-div-login">
+        <div class="left-inner">
+          <h1><u style="text-decoration-color: #6454b4">Welcome Back!</u></h1>
+          <p class="text-muted signup-msg">
+            <span class="title">Gradely!</span> Let's continue your journey to
+            success.
+          </p>
+          <form>
+            <div class="mt-5 signup-form">
+              <label for="username" class="form-label"></label>
+              <input
+                type="email"
+                class="form-control signup-input-fields"
+                id="username"
+                placeholder="Username(E-mail)"
+              />
+            </div>
+            <div class="signup-form password-container">
+              <label for="password" class="form-label"></label>
+              <input
+                type="password"
+                class="form-control signup-input-fields"
+                id="password"
+                placeholder="Password"
+              />
+              <button
+                class="toggle-visibility"
+                onclick="togglePassword()"
+                type="button"
+              >
+                <svg
+                  id="eye-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.822 2.492-3.002 4.872-6.138 6.29C13.113 19.5 11.568 20 12 20c-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <button type="submit" class="mt-5 signup-btn">Login</button>
+            <p class="text-center mt-3">
+              Not a member? <a href="/signup"><b>Register now</b></a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function togglePassword() {
+    const passwordInput = document.getElementById("password");
+    const eyeIcon = document.getElementById("eye-icon");
+    const isPassword = passwordInput.type === "password";
+
+    // Toggle input type
+    passwordInput.type = isPassword ? "text" : "password";
+
+    // Change the icon (optional)
+    if (isPassword) {
+      eyeIcon.innerHTML = `
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825c2.175-1.095 3.885-2.955 5.063-5.118 1.113-2.045 1.113-4.564 0-6.608-1.178-2.163-2.888-4.023-5.063-5.118a11.964 11.964 0 00-3.875-.675 11.964 11.964 0 00-3.875.675c-2.175 1.095-3.885 2.955-5.063 5.118-1.113 2.045-1.113 4.564 0 6.608 1.178 2.163 2.888 4.023 5.063 5.118a11.964 11.964 0 003.875.675c1.314 0 2.616-.235 3.875-.675zM12 15a3 3 0 100-6 3 3 0 000 6z" />`;
+    } else {
+      eyeIcon.innerHTML = `
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.822 2.492-3.002 4.872-6.138 6.29C13.113 19.5 11.568 20 12 20c-4.477 0-8.268-2.943-9.542-7z" />`;
+    }
+  }
+</script>
+
+{% endblock %}

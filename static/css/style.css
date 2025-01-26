@@ -1,0 +1,144 @@
+/* common styling */
+body {
+  font-family: "Poppins", serif;
+  margin: 0 !important;
+}
+a {
+  text-decoration: none;
+  color: #716da7;
+}
+h1 {
+  font-family: "Montserrat", serif;
+  font-weight: 700;
+}
+.container {
+  margin: 0 !important;
+}
+.row {
+  margin: 0 !important;
+}
+
+/* signup form style */
+.total-signup {
+  width: 100vw;
+  height: 100vh;
+}
+
+.left-inner {
+  margin: 70px;
+}
+
+.title {
+  color: #6545b4;
+}
+.signup {
+  width: 100vw;
+  height: 100vh;
+  background-color: #ebecef;
+}
+
+.right-outer-div {
+  border: none;
+  height: 88%;
+  width: 40%;
+  border-radius: 20px;
+  background-color: #d0d1e1c5;
+  padding: 30px;
+}
+.right-img {
+  width: 35vw;
+  height: 35vh;
+  margin-top: 7rem;
+}
+.right-inner-div h5 {
+  margin-top: 70px;
+}
+
+.signup-msg {
+  letter-spacing: 2px;
+  word-spacing: 2px;
+  margin-top: 15px;
+}
+
+.signup-input-fields {
+  border: #d0d1e1;
+  border-radius: 30px;
+  margin: 0 30px 0 30px;
+  padding: 15px;
+}
+.signup-form {
+  margin: 0 50px 0 50px;
+}
+.signup-btn {
+  border: none;
+  border-radius: 30px;
+  margin: 0 30px 0 50px;
+  padding: 15px;
+  background-color: #6445b4ad;
+  color: white;
+  font-weight: 700;
+  width: 80%;
+  margin-right: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.signup-btn:hover {
+  background-color: #6445b4;
+  transform: scale(1.05);
+}
+.submit-btn:active {
+  transform: scale(0.95); /* Slightly shrink on click */
+}
+
+/* login form style*/
+.login {
+  width: 100vw;
+  height: 100vh;
+  background-color: #ebecef;
+}
+.left-outer-div-login {
+  margin-top: 100px;
+}
+.left-img-login {
+  width: 35vw;
+  height: 35vh;
+  margin-top: 7rem;
+  margin-left: -45px;
+  transform: scaleX(-1);
+}
+.left-outer-div-login {
+  border: none;
+  height: 88%;
+  width: 35%;
+  border-radius: 20px;
+  background-color: #d0d1e1c5;
+  padding: 50px;
+  margin-left: 130px;
+}
+.right-outer-div-login {
+  margin-top: 100px;
+}
+
+/* password visibility toggler */
+.password-container {
+  position: relative;
+}
+.toggle-visibility {
+  position: absolute;
+  right: -15px;
+  top: 62%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.toggle-visibility svg {
+  width: 17px;
+  height: 17px;
+  opacity: 0.5;
+}
+.toggle-visibility svg:hover {
+  width: 17px;
+  height: 17px;
+  opacity: 1;
+}
