@@ -16,14 +16,16 @@
             <span class="title">Gradely!</span> Let's continue your journey to
             success.
           </p>
-          <form>
+          <form method="post" action="{{ url_for('login') }}">
             <div class="mt-5 signup-form">
               <label for="username" class="form-label"></label>
               <input
                 type="email"
                 class="form-control signup-input-fields"
                 id="username"
+                name="username"
                 placeholder="Username(E-mail)"
+                required
               />
             </div>
             <div class="signup-form password-container">
@@ -32,7 +34,9 @@
                 type="password"
                 class="form-control signup-input-fields"
                 id="password"
+                name="password"
                 placeholder="Password"
+                required
               />
               <button
                 class="toggle-visibility"

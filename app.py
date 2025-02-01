@@ -1,21 +1,21 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
+from config import Config
+from dotenv import load_dotenv
+
+# loading.env file for environment variables
+load_dotenv()
+
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return render_template('landing.html')
+# loading config.py
+app.config.from_object(Config)
 
-@app.route('/signup')
-def signup():
-    return render_template('signup.html')
+# initialize SQLAlchemy
+db = SQLAlchemy(app)
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
+from routes import *
 
-# Define your 404 error handler
-@app.errorhandler(404)
-def not_found_error(error):
-    return render_template('NotFound.html'), 404
 
-app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
