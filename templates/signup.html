@@ -9,7 +9,7 @@
           <p class="text-muted signup-msg">
             Master your exams with Gradely. Sign up to get started.
           </p>
-          <form method="post" action="/signup">
+          <form method="post" action="{{ url_for('signup') }}">
             <div class="mt-5 signup-form">
               <label for="username" class="form-label"></label>
               <input

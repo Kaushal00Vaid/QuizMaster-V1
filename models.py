@@ -12,6 +12,15 @@ class User(db.Model):
     name = db.Column(db.String(30), nullable=False)
     qualification = db.Column(db.String(60), nullable=False)
     dob = db.Column(db.Date, nullable=False)
+
+    # hashing password
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+    # checking password
+    def check_password(self, password):
+        return self.password == password
+
 # inserting admin
 def insert_admin(*args, **kwargs):
     if not User.query.filter_by(username="admin@gmail.com").first():
@@ -28,20 +37,18 @@ def insert_admin(*args, **kwargs):
     else:
         print("Admin already exists")
 
-# checking password
-def check_password(self, password):
-    return check_password_hash(self.password, password)
-
 
 class Subject(db.Model):
     __tablename__ ='subject'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)
+    description = db.Column(db.String(100), nullable=False)
 
 class Chapter(db.Model):
     __tablename__ ='chapter'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
+    description = db.Column(db.String(200), nullable=False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
 
     subject = db.relationship('Subject', backref=db.backref('chapters', lazy=True))
@@ -51,6 +58,7 @@ class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id'), nullable=False)
+    date = db.Column(db.Date, nullable=False)
     duration = db.Column(db.Integer, nullable=False, default=10)
 
     chapter = db.relationship('Chapter', backref=db.backref('quizzes', lazy=True))
