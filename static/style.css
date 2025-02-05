@@ -163,3 +163,18 @@ h1 {
   word-spacing: 2px;
   margin-top: 15px;
 }
+
+/* subject folders */
+.subject-row {
+  margin-top: 16px;
+}
+.subject_folder {
+  width: 60%;
+}
+.each-sub {
+  justify-content: center;
+  text-align: center;
+}
+.each-sub img {
+  cursor: pointer;
+}

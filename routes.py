@@ -4,13 +4,15 @@ from app import app,db
 from models import User, Subject, Chapter, Quiz, Question, UserQuizAttempt
 from datetime import datetime
 
+# ============================= ALL HELPER FUNCTIONS ============================
+
 # authentication for admin
 def admin_auth_required(func):
     @wraps(func)
     @auth_required
     def inner(*args,**kwargs):
         if session['user_id'] != 1:
-            flash('Access denied. Only admin can access this page.')
+            flash('Access denied. Only admin can access this page.', category='danger')
             return redirect(url_for('home'))
         return func(*args, **kwargs)
     return inner
@@ -20,34 +22,31 @@ def auth_required(func):
     @wraps(func)
     def inner(*args, **kwargs):
         if 'user_id' not in session:
-            flash('Please login first.')
+            flash('Please login first.',category='danger')
             return redirect(url_for('login'))
         return func(*args, **kwargs)
     return inner
 
+# ============================= ALL ROUTES =============================
 
+# root landing page
 @app.route('/')
-@auth_required
 def home():
-    return render_template('landing.html', name=User.query.get(session['user_id']))
+    return render_template('landing.html',session=session)
 
-# login and signup
-@app.route('/signup')
-def signup():
-    return render_template('signup.html')
-
+# login get
 @app.route('/login')
 def login():
     return render_template('login.html')
 
-# checking login credentials
+# login post
 @app.route('/login', methods=['POST'])
 def login_post():
     username = request.form.get('username')
     password = request.form.get('password')
     # checking if all fields are filled up
     if username=='' or password=='':
-        flash('All fields are required')
+        flash('All fields are required', category='danger')
         return redirect(url_for('login'))
     
     # fetching user from db
@@ -55,21 +54,26 @@ def login_post():
     
     # checking if user is admin and password is correct
     if username == 'admin@gmail.com' and password == 'admin':
-        flash('Login successful as admin','success')
+        flash('Login successful as admin',category='success')
         session['user_id'] = is_user.id
-        return redirect(url_for('home'))
+        return redirect(url_for('adminDashboard'))
     
     if not is_user:
-        flash('Username does not exist','danger')
+        flash('Username does not exist',category='danger')
         return redirect(url_for('signup'))
     if not is_user.check_password(password):
-        flash('Incorrect password','danger')
+        flash('Incorrect password',category='danger')
         return redirect(url_for('login'))
     # login successful
     session['user_id'] = is_user.id
-    return redirect(url_for('home'))
+    return redirect(url_for('userDashboard'))
 
-# signup details and updation in DB
+# signup get
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
+
+# signup post
 @app.route('/signup',methods=['POST'])
 def signup_post():
     username = request.form.get('username')
@@ -82,37 +86,153 @@ def signup_post():
     
     # checking if all fields are filled up
     if username=='' or password=='' or name=='' or qualification=='' or dob=='':
-        flash('All fields are required')
+        flash('All fields are required',category='danger')
         return redirect(url_for('signup'))
     # check if username already exists
     if User.query.filter_by(username=username).first():
-        flash('This email has already been used earlier')
+        flash('This email has already been used earlier',category='danger')
         return redirect(url_for('signup'))
         
     new_user = User(username=username, password=password, name=name,qualification=qualification,dob=dob)
     db.session.add(new_user)
     db.session.commit()
-    flash('User created successfully','success')
+    flash('User created successfully',category='success')
     return redirect(url_for('login'))
 
 # logout
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
+    flash('User logged out successfully',category='success')
     return redirect(url_for('home'))
     
 # admin dashboard
 @app.route('/adminDashboard')
 @admin_auth_required
 def adminDashboard():
-    return "admin"
+    subjects = Subject.query.all()
+    return render_template('subjects.html', subjects=subjects)
 
 # user dashboard
+@app.route('/userDashboard')
+@auth_required
+def userDashboard():
+    return "hello"
+
+# user profile
 @app.route('/profile')
 @auth_required
 def userProfile():
     return render_template('userProfile.html', user=User.query.get(session['user_id']))
 
+# ------------------------- SUBJECT CRUD -----------------------
+
+# Add new Subject GET
+@app.route('/addSubject')
+@admin_auth_required
+def addSubject():
+    return render_template('addSubject.html')
+
+# Add new Subject POST
+@app.route('/addSubject', methods=['POST'])
+@admin_auth_required
+def addSubject_post():
+    name = request.form.get('name')
+    description = request.form.get('description')
+    # checking if all fields are filled up
+    if name=='' or description=='':
+        flash('All fields are required', category='danger')
+        return redirect(url_for('addSubject'))
+    # check if subject already exists
+    if Subject.query.filter_by(name=name).first():
+        flash('The Subject is already present',category='danger')
+        return redirect(url_for('addSubject'))
+    new_subject = Subject(name=name, description=description)
+    db.session.add(new_subject)
+    db.session.commit()
+    flash('Subject added successfully', category='success')
+    return redirect(url_for('adminDashboard'))
+
+# Delete Subject
+@app.route('/adminDashboard/<subject_name>/delete/<int:subject_id>', methods=['POST'])
+@admin_auth_required
+def delete_Subject(subject_name, subject_id):
+    subject = Subject.query.get(subject_id)
+    if not subject:
+        flash('Subject not found', category='danger')
+        return redirect(url_for('adminDashboard'))
+    
+    # subject --> chapter --> quiz --> question
+    
+    # Fetching all chapters related to this subject
+    chapters = Chapter.query.filter_by(subject_id=subject.id).all()
+    for chapter in chapters:
+        # Fetching all quizzes linked to this chapter
+        quizzes = Quiz.query.filter_by(chapter_id=chapter.id).all()
+
+        for quiz in quizzes:
+            # Delete all questions related to this quiz
+            Question.query.filter_by(quiz_id=quiz.id).delete()
+            
+            # Delete the quiz
+            db.session.delete(quiz)
+
+        # Delete the chapter
+        db.session.delete(chapter)
+
+    # Delete the subject itself
+    db.session.delete(subject)
+    db.session.commit()
+
+    flash(f"Subject '{subject.name}' and all related data deleted successfully!", "success")
+    return redirect(url_for('adminDashboard'))
+
+# Edit Subject
+@app.route('/adminDashboard/<subject_name>/edit_subject', methods=['GET','POST'])
+@admin_auth_required
+def edit_subject(subject_name):
+    subject = Subject.query.filter_by(name=subject_name).first()
+    if not subject:
+        flash('Subject not found', category='danger')
+        return redirect(url_for('adminDashboard'))
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        description = request.form.get('description')
+        
+        # checking if all fields are filled up
+        if name=='' or description=='':
+            flash('All fields are required', category='danger')
+            return redirect(url_for('edit_subject', subject_name=subject_name))
+        
+        subject.name = name
+        subject.description = description
+        db.session.commit()
+        flash(f"Subject '{subject.name}' updated successfully!", "success")
+        return redirect(url_for('adminDashboard'))
+    return render_template('editSubject.html', subject=subject)
+
+# -----------------------------------------------------------------------
+
+# ------------------------- CHAPTER CRUD------------------------
+
+
+# All chapters in Individual subject GET
+@app.route('/adminDashboard/<subject_name>')
+@admin_auth_required
+def chapter_list(subject_name):
+    subject = Subject.query.filter_by(name=subject_name).first()
+    if not subject:
+        flash('Subject not found', category='danger')
+        return redirect(url_for('adminDashboard'))
+    chapter_list = subject.chapters
+    return render_template('chapters.html', subject=subject, chapters=chapter_list)
+
+# Add new Chapter GET
+@app.route('/<subject_name>/addChapter')
+@admin_auth_required
+def addChapter(subject_name):
+    return "hello"
 
 
 # Define your 404 error handler

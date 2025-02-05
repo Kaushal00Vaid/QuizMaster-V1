@@ -15,20 +15,30 @@
       /><a class="navbar-brand">Gradely</a>
     </div>
 
-    <form class="d-flex" role="search">
+    <form class="d-flex">
+      {%if 'user_id' not in session%}
       <a href="/login"
         ><button class="btn btn-outline-success" type="button">Login</button></a
       >
+      &nbsp;&nbsp;&nbsp;
       <a href="/signup"
         ><button class="btn btn-outline-success" type="button">
           Signup
         </button></a
       >
+      {%endif%} {% if 'user_id' in session %}
+      <a href="/profile"
+        ><button class="btn btn-outline-success" type="button">
+          Profile
+        </button></a
+      >
+      &nbsp;&nbsp;&nbsp;
       <a href="/logout"
         ><button class="btn btn-outline-danger" type="button">Logout</button></a
       >
+      {% endif %}
     </form>
   </div>
 </nav>
-<h1>Hello {{name.name}}</h1>
+<h1>Hello to Landing Page</h1>
 {% endblock %}

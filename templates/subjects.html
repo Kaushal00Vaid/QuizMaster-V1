@@ -1,0 +1,77 @@
+{% extends 'boilerplate.html' %} {% block body %}
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/home">Gradely</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/summary"
+            >Summary</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/newQuiz"
+            >Add new Quiz</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/profile"
+            >Profile</a
+          >
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+        />
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <a href="/logout"
+        ><button class="btn btn-outline-danger" type="button">Logout</button></a
+      >
+    </div>
+  </div>
+</nav>
+
+<!-- displaying subjects -->
+
+<h2 class="text-center mt-2">Subjects</h2>
+<div class="container sub-con">
+  <div class="row subject-row">
+    {% for subject in subjects %}
+    <div class="col-1 each-sub mt-3">
+      <a href="{{ url_for('chapter_list', subject_name=subject.name) }}"
+        ><img src="../static/assets/folder_icon.png" class="subject_folder"
+      /></a>
+      <br />
+      <a href="{{ url_for('chapter_list', subject_name=subject.name) }}"
+        >{{ subject.name }}</a
+      >
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- adding subject -->
+<div class="d-flex justify-content-center mt-5">
+  <a href="/addSubject" class="mt-5"
+    ><button class="btn btn-outline-success">Add New Subject</button></a
+  >
+</div>
+{% endblock %}
