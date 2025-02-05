@@ -1,6 +1,6 @@
 {% extends 'boilerplate.html' %} {% block body %}
 
-<!-- displaying subjects -->
+<!-- displaying chapters -->
 
 <h2 class="text-center mt-2">
   Chapters for <span class="title">{{ subject.name }}</span>
@@ -9,7 +9,27 @@
 
 <div class="container">
   <div class="row">
-    {% for chapter in chapters %} {{ chapter.name }} <br />
+    {% for chapter in chapters %}
+    <div class="mt-5">
+      <span
+        ><a
+          href="{{ url_for('quizzes_list', chapter_name=chapter.name, subject_name=subject.name) }}"
+          >{{ chapter.name }}</a
+        ></span
+      >
+      <span
+        ><form
+          method="POST"
+          class="d-flex"
+          action="{{ url_for('delete_Chapter', chapter_id=chapter.id, chapter_name=chapter.name) }}"
+        >
+          <button type="submit" class="btn btn-outline-danger">
+            Delete Chapter
+          </button>
+        </form></span
+      >
+    </div>
+    <br />
     {% else %}
     <p>No chapters found for this subject.</p>
     {% endfor %}

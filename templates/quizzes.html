@@ -1,0 +1,44 @@
+{% extends 'boilerplate.html' %} {% block body %}
+<!-- displaying chapters -->
+
+<h2 class="text-center mt-2">
+  Quizzes for <span class="title">{{ chapter.name }}</span>
+</h2>
+<p class="text-center mt-2">Chapter Description - {{chapter.description}}</p>
+
+<div class="container">
+  <div class="row">
+    {% for quiz in quizzes %}
+    <div class="mt-5">
+      <span><a href="">{{ quiz.title }}</a></span
+      >&nbsp;&nbsp;&nbsp;Duration: {{ quiz.duration }}(mins)
+      <span
+        ><form method="POST" action="">
+          <button type="submit" class="btn btn-outline-danger">
+            Delete Quiz
+          </button>
+        </form>
+      </span>
+    </div>
+    <br />
+    {% else %}
+    <p>No quizzes found for this chapter.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- adding Quizzes -->
+<div class="d-flex justify-content-center mt-5">
+  <!-- add Quiz -->
+  <a href="" class="mt-5"
+    ><button class="btn btn-outline-success">Add New Quiz</button></a
+  >
+  &nbsp;&nbsp;&nbsp;
+  <!-- edit Chapter -->
+  <a
+    href="{{ url_for('edit_chapter', subject_name=subject.name, chapter_name=chapter.name) }}"
+    class="mt-5"
+    ><button class="btn btn-outline-success">Edit Chapter</button></a
+  >
+</div>
+{% endblock %}

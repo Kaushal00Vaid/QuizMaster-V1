@@ -217,7 +217,7 @@ def edit_subject(subject_name):
 # ------------------------- CHAPTER CRUD------------------------
 
 
-# All chapters in Individual subject GET
+# Read all chapters
 @app.route('/adminDashboard/<subject_name>')
 @admin_auth_required
 def chapter_list(subject_name):
@@ -229,10 +229,103 @@ def chapter_list(subject_name):
     return render_template('chapters.html', subject=subject, chapters=chapter_list)
 
 # Add new Chapter GET
-@app.route('/<subject_name>/addChapter')
+@app.route('/adminDashboard/<subject_name>/addChapter', methods=["GET","POST"])
 @admin_auth_required
 def addChapter(subject_name):
-    return "hello"
+    subject = Subject.query.filter_by(name=subject_name).first()
+    if not subject:
+        flash('Subject not found', category='danger')
+        return redirect(url_for('adminDashboard'))
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        description = request.form.get('description')
+        
+        # checking if all fields are filled up
+        if name=='' or description=='':
+            flash('All fields are required', category='danger')
+            return redirect(url_for('addChapter', subject_name=subject_name))
+        
+        new_chapter = Chapter(name=name, description=description, subject_id=subject.id)
+        db.session.add(new_chapter)
+        db.session.commit()
+        flash(f"Chapter '{new_chapter.name}' added successfully!", "success")
+        return redirect(url_for('chapter_list', subject_name=subject_name))
+    return render_template('addChapter.html', subject=subject)
+
+# Delete Chapter
+@app.route('/adminDashboard/delete/<chapter_name>/<int:chapter_id>', methods=['POST'])
+@admin_auth_required
+def delete_Chapter(chapter_name, chapter_id):
+    chapter = Chapter.query.get(chapter_id)
+    subject_name = chapter.subject.name
+    if not chapter:
+        flash('Chapter not found', category='danger')
+        return redirect(url_for('chapter_list', subject_name=subject_name))
+    
+    # chapter --> quiz --> question
+    
+    # Fetching all quizzes related to this chapter
+    quizzes = Quiz.query.filter_by(chapter_id=chapter.id).all()
+    for quiz in quizzes:
+        # Delete all questions related to this quiz
+        Question.query.filter_by(quiz_id=quiz.id).delete()
+        
+        # Delete the quiz
+        db.session.delete(quiz)
+    
+    # Delete the chapter
+    db.session.delete(chapter)
+    db.session.commit()
+
+    flash(f"Chapter '{chapter.name}' and all related data deleted successfully!", "success")
+    return redirect(url_for('chapter_list', subject_name=subject_name))
+
+# Edit Chapter
+@app.route('/adminDashboard/<subject_name>/<chapter_name>/edit_chapter', methods=['GET','POST'])
+@admin_auth_required
+def edit_chapter(subject_name, chapter_name):
+    subject = Subject.query.filter_by(name=subject_name).first()
+    chapter = Chapter.query.filter_by(name=chapter_name, subject_id=subject.id).first()
+    if not chapter:
+        flash('Chapter not found', category='danger')
+        return redirect(url_for('chapter_list', subject_name=subject_name))
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        description = request.form.get('description')
+        
+        # checking if all fields are filled up
+        if name=='' or description=='':
+            flash('All fields are required', category='danger')
+            return redirect(url_for('edit_chapter', subject_name=subject_name, chapter_name=chapter_name))
+        
+        chapter.name = name
+        chapter.description = description
+        db.session.commit()
+        flash(f"Chapter '{chapter.name}' updated successfully!", "success")
+        return redirect(url_for('chapter_list', subject_name=subject_name))
+    return render_template('editChapter.html', chapter=chapter, subject=subject)
+
+# -----------------------------------------------------------------------
+
+# ------------------------- QUIZZES CRUD------------------------
+
+
+# quiz read
+@app.route('/adminDashboard/<subject_name>/<chapter_name>')
+@admin_auth_required
+def quizzes_list(chapter_name,subject_name):
+    subject = Subject.query.filter_by(name=subject_name).first()
+    chapter = Chapter.query.filter_by(name=chapter_name, subject_id=subject.id).first()
+    if not subject or not chapter:
+        flash('Subject or Chapter not found', category='danger')
+        return redirect(url_for('adminDashboard'))
+    quizzes = chapter.quizzes
+    return render_template('quizzes.html', subject=subject, chapter=chapter, quizzes=quizzes)
+
+
+
 
 
 # Define your 404 error handler
