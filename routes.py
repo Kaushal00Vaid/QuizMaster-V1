@@ -209,7 +209,7 @@ def edit_subject(subject_name):
         subject.description = description
         db.session.commit()
         flash(f"Subject '{subject.name}' updated successfully!", "success")
-        return redirect(url_for('adminDashboard'))
+        return redirect(url_for('chapter_list', subject_name=subject.name))
     return render_template('editSubject.html', subject=subject)
 
 # -----------------------------------------------------------------------
@@ -228,7 +228,7 @@ def chapter_list(subject_name):
     chapter_list = subject.chapters
     return render_template('chapters.html', subject=subject, chapters=chapter_list)
 
-# Add new Chapter GET
+# Add new Chapter
 @app.route('/adminDashboard/<subject_name>/addChapter', methods=["GET","POST"])
 @admin_auth_required
 def addChapter(subject_name):
@@ -304,7 +304,7 @@ def edit_chapter(subject_name, chapter_name):
         chapter.description = description
         db.session.commit()
         flash(f"Chapter '{chapter.name}' updated successfully!", "success")
-        return redirect(url_for('chapter_list', subject_name=subject_name))
+        return redirect(url_for('quizzes_list', subject_name=subject_name, chapter_name=chapter.name))
     return render_template('editChapter.html', chapter=chapter, subject=subject)
 
 # -----------------------------------------------------------------------
@@ -324,8 +324,218 @@ def quizzes_list(chapter_name,subject_name):
     quizzes = chapter.quizzes
     return render_template('quizzes.html', subject=subject, chapter=chapter, quizzes=quizzes)
 
+# quiz create
+@app.route('/adminDashboard/<subject_name>/<chapter_name>/addQuiz', methods=["GET","POST"])
+@admin_auth_required
+def addQuiz(subject_name,chapter_name):
+    subject = Subject.query.filter_by(name=subject_name).first()
+    chapter = Chapter.query.filter_by(name=chapter_name, subject_id=subject.id).first()
+    if not subject or not chapter:
+        flash('Subject or Chapter not found', category='danger')
+        return redirect(url_for('adminDashboard'))
+    
+    if request.method == 'POST':
+        title = request.form.get('title')
+        # handling dates
+        date_string = request.form.get('date')
+        date = datetime.strptime(date_string, '%Y-%m-%d').date()
+        duration = int(request.form.get('duration'))
+        
+        # checking if all fields are filled up
+        if title=='' or date=='' or duration=='':
+            flash('All fields are required', category='danger')
+            return redirect(url_for('addQuiz', subject_name=subject_name, chapter_name=chapter.name))
+        
+        if duration<0:
+            flash('Duration should be a number and should be Positive', category='danger')
+            return redirect(url_for('addQuiz', subject_name=subject_name, chapter_name=chapter.name))
+
+        new_quiz = Quiz(title=title, date=date, chapter_id=chapter.id, duration=duration)
+        db.session.add(new_quiz)
+        db.session.commit()
+        flash(f"Quiz '{new_quiz.title}' added successfully!", "success")
+        return redirect(url_for('quizzes_list', subject_name=subject_name, chapter_name=chapter.name))
+    
+    return render_template('addQuiz.html', subject=subject, chapter=chapter)
+
+# quiz delete
+@app.route('/adminDashboard/delete/quiz/<int:quiz_id>', methods=['POST'])
+@admin_auth_required
+def delete_Quiz(quiz_id):
+    quiz = Quiz.query.get(quiz_id)
+    chapter = quiz.chapter
+    subject = chapter.subject
+    if not quiz:
+        flash('Quiz not found', category='danger')
+        return redirect(url_for('quizzes_list', subject_name=subject.name, chapter_name=chapter.name))
+    
+    # quiz --> question
+    
+    # fetching questions
+    questions = Question.query.filter_by(quiz_id=quiz.id).all()
+    for question in questions:
+        # Delete all questions related to this quiz
+        Question.query.filter_by(quiz_id=quiz.id).delete()
+        
+    # Delete the quiz
+    db.session.delete(quiz)
+    db.session.commit()
+
+    flash(f"Quiz '{quiz.title}' and all related data deleted successfully!", "success")
+    return redirect(url_for('quizzes_list', subject_name=subject.name, chapter_name=chapter.name))
+
+# quiz edit
+@app.route('/adminDashboard/<subject_name>/<chapter_name>/<quiz_title>/edit_quiz', methods=['GET','POST'])
+@admin_auth_required
+def edit_quiz(subject_name, chapter_name, quiz_title):
+    subject = Subject.query.filter_by(name=subject_name).first()
+    chapter = Chapter.query.filter_by(name=chapter_name, subject_id=subject.id).first()
+    quiz = Quiz.query.filter_by(title=quiz_title).first()
+    if not quiz:
+        flash('Quiz not found', category='danger')
+        return redirect(url_for('quizzes_list', subject_name=subject_name, chapter_name=chapter.name))
+    
+    if request.method == 'POST':
+        title = request.form.get('title')
+        # handling dates
+        date_string = request.form.get('date')
+        date = datetime.strptime(date_string, '%Y-%m-%d').date()
+        duration = int(request.form.get('duration'))
+        
+        # checking if all fields are filled up
+        if title=='' or date=='' or duration=='':
+            flash('All fields are required', category='danger')
+            return redirect(url_for('edit_quiz', subject_name=subject_name, chapter_name=chapter.name, quiz_title=quiz.title))
+        
+        if duration<0:
+            flash('Duration should be a number and should be Positive', category='danger')
+            return redirect(url_for('edit_quiz', subject_name=subject_name, chapter_name=chapter.name, quiz_title=quiz.title))
+        
+        quiz.title = title
+        quiz.date = date
+        quiz.duration = duration
+        db.session.commit()
+        flash(f"Quiz '{quiz.title}' updated successfully!", "success")
+        return redirect(url_for('quizzes_list', subject_name=subject_name, chapter_name=chapter.name))
+    return render_template('editQuiz.html', chapter=chapter, subject=subject, quiz=quiz)
 
 
+# -----------------------------------------------------------------------
+
+# ------------------------- QUESTIONS CRUD------------------------
+
+
+# question read
+@app.route('/adminDashboard/<subject_name>/<chapter_name>/<quiz_title>')
+@admin_auth_required
+def question_list(chapter_name,subject_name,quiz_title):
+    subject = Subject.query.filter_by(name=subject_name).first()
+    chapter = Chapter.query.filter_by(name=chapter_name, subject_id=subject.id).first()
+    quiz = Quiz.query.filter_by(title=quiz_title).first()
+    if not subject or not chapter or not quiz:
+        flash('Subject or Chapter or Quiz not found', category='danger')
+        return redirect(url_for('adminDashboard'))
+    questions = quiz.questions
+    return render_template('questions.html', quiz=quiz, questions=questions, subject=subject, chapter=chapter)
+
+# question create
+@app.route('/adminDashboard/<subject_name>/<chapter_name>/<quiz_title>/addQuestion', methods=["GET","POST"])
+@admin_auth_required
+def addQuestion(subject_name,chapter_name,quiz_title):
+    subject = Subject.query.filter_by(name=subject_name).first()
+    chapter = Chapter.query.filter_by(name=chapter_name, subject_id=subject.id).first()
+    quiz = Quiz.query.filter_by(title=quiz_title).first()
+    if not subject or not chapter or not quiz:
+        flash('Subject or Chapter or Quiz not found', category='danger')
+        return redirect(url_for('adminDashboard'))
+    
+    if request.method == 'POST':
+        questionTitle = request.form.get('questionTitle')
+        option_a = request.form.get('option_a')
+        option_b = request.form.get('option_b')
+        option_c = request.form.get('option_c')
+        option_d = request.form.get('option_d')
+        correct_option = request.form.get('correct_option')
+        marks = int(request.form.get('marks'))
+        
+        # checking if all fields are filled up
+        if questionTitle=='' or option_a=='' or option_b=='' or option_c=='' or option_d=='' or correct_option=='':
+            flash('All fields are required', category='danger')
+            return redirect(url_for('addQuestion', subject_name=subject_name, chapter_name=chapter.name, quiz_title=quiz.title))
+
+        new_question = Question(quiz_id=quiz.id, questionTitle=questionTitle, option_a=option_a, option_b=option_b, option_c=option_c, option_d=option_d, correct_option=correct_option, marks=marks)
+        db.session.add(new_question)
+        db.session.commit()
+        flash("Question added successfully!", "success")
+        return redirect(url_for('question_list', subject_name=subject_name, chapter_name=chapter.name, quiz_title=quiz.title))
+    
+    return render_template('addQuestion.html', subject=subject, chapter=chapter, quiz=quiz)
+
+# question delete
+@app.route('/adminDashboard/delete/question/<int:question_id>', methods=['POST'])
+@admin_auth_required
+def delete_Question(question_id):
+    question = Question.query.get(question_id)
+    quiz = question.quiz
+    chapter = quiz.chapter
+    subject = chapter.subject
+    if not question:
+        flash('Question not found', category='danger')
+        return redirect(url_for('question_list', subject_name=subject.name, chapter_name=chapter.name, quiz_title=quiz.title))
+    
+    # Delete the question
+    db.session.delete(question)
+    db.session.commit()
+
+    flash("Question Deleted Successfully", "success")
+    return redirect(url_for('question_list', subject_name=subject.name, chapter_name=chapter.name, quiz_title=quiz.title))
+
+# question edit
+@app.route('/adminDashboard/<subject_name>/<chapter_name>/<quiz_title>/<question_id>/edit_question', methods=['GET','POST'])
+@admin_auth_required
+def edit_question(subject_name, chapter_name, quiz_title, question_id):
+    question = Question.query.get(question_id)
+    subject = Subject.query.filter_by(name=subject_name).first()
+    chapter = Chapter.query.filter_by(name=chapter_name, subject_id=subject.id).first()
+    quiz = Quiz.query.filter_by(title=quiz_title).first()
+    if not question:
+        flash('Question not found', category='danger')
+        return redirect(url_for('question_list', subject_name=subject_name, chapter_name=chapter.name, quiz_title=quiz.title))
+    
+    if request.method == 'POST':
+        questionTitle = request.form.get('questionTitle')
+        option_a = request.form.get('option_a')
+        option_b = request.form.get('option_b')
+        option_c = request.form.get('option_c')
+        option_d = request.form.get('option_d')
+        correct_option = request.form.get('correct_option')
+        marks = int(request.form.get('marks'))
+        
+        # checking if all fields are filled up
+        if questionTitle=='' or option_a=='' or option_b=='' or option_c=='' or option_d=='' or correct_option=='':
+            flash('All fields are required', category='danger')
+            return redirect(url_for('edit_question', subject_name=subject_name, chapter_name=chapter.name, quiz_title=quiz.title, question_id=question.id))
+        
+        question.questionTitle = questionTitle
+        question.option_a = option_a
+        question.option_b = option_b
+        question.option_c = option_c
+        question.option_d = option_d
+        question.correct_option = correct_option
+        question.marks = marks
+        db.session.commit()
+        flash("Question updated successfully!", "success")
+        return redirect(url_for('question_list', subject_name=subject_name, chapter_name=chapter.name, quiz_title=quiz.title))
+    return render_template('editQuestion.html', chapter=chapter, subject=subject, quiz=quiz, question=question)
+
+# -----------------------------------------------------------------------
+
+# ------------------------- ADMIN SUMMARY _ USERS LIST ------------------------
+@app.route('/summary')
+@admin_auth_required
+def summary():
+    users = User.query.all()
+    return render_template('summary.html', users=users)
 
 
 # Define your 404 error handler

@@ -1,0 +1,112 @@
+{% extends 'boilerplate.html' %} {% block body %}
+
+<div class="signup">
+  <div class="container">
+    <div class="row text-center total-signup mt-5">
+      <div class="col-6 left-outer-div">
+        <div class="left-inner">
+          <h1>
+            Add <span class="title">Question</span> for
+            <span class="title">{{quiz.name}}</span>
+          </h1>
+          <p class="text-muted signup-msg">Hello Master!</p>
+          <form
+            method="post"
+            action="{{ url_for('addQuestion', subject_name=subject.name, chapter_name=chapter.name, quiz_title=quiz.title) }}"
+          >
+            <div class="mt-5 signup-form">
+              <label for="questionTitle" class="form-label"></label>
+              <input
+                type="text"
+                name="questionTitle"
+                class="form-control signup-input-fields"
+                id="questionTitle"
+                placeholder="Enter Question Statement"
+                required
+              />
+            </div>
+            <div class="signup-form password-container">
+              <label for="option_a" class="form-label"></label>
+              <input
+                type="text"
+                name="option_a"
+                class="form-control signup-input-fields"
+                id="option_a"
+                placeholder="Option A"
+                required
+              />
+            </div>
+            <div class="signup-form password-container">
+              <label for="option_b" class="form-label"></label>
+              <input
+                type="text"
+                name="option_b"
+                class="form-control signup-input-fields"
+                id="option_b"
+                placeholder="Option B"
+                required
+              />
+            </div>
+            <div class="signup-form password-container">
+              <label for="option_c" class="form-label"></label>
+              <input
+                type="text"
+                name="option_c"
+                class="form-control signup-input-fields"
+                id="option_c"
+                placeholder="Option C"
+                required
+              />
+            </div>
+            <div class="signup-form password-container">
+              <label for="option_d" class="form-label"></label>
+              <input
+                type="text"
+                name="option_d"
+                class="form-control signup-input-fields"
+                id="option_d"
+                placeholder="Option D"
+                required
+              />
+            </div>
+            <div class="signup-form password-container">
+              <label for="correct_option" class="form-label"></label>
+              <input
+                type="text"
+                name="correct_option"
+                class="form-control signup-input-fields"
+                id="correct_option"
+                placeholder="Correct Option (A,B,C,D)"
+                required
+              />
+            </div>
+            <div class="signup-form password-container">
+              <label for="marks" class="form-label"></label>
+              <input
+                type="number"
+                name="marks"
+                class="form-control signup-input-fields"
+                id="marks"
+                placeholder="Marks"
+                required
+              />
+            </div>
+            <button type="submit" class="mt-4 signup-btn">Add Question</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-6 right-outer-div mt-5">
+        <div class="right-inner-div">
+          <img
+            src="{{url_for('static', filename='/assets/coder_2.svg')}}"
+            class="right-img"
+          />
+          <h5>New Question, new challenge! Your users are waiting.</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,5 +1,5 @@
 {% extends 'boilerplate.html' %} {% block body %}
-<!-- displaying chapters -->
+<!-- displaying quizzes -->
 
 <h2 class="text-center mt-2">
   Quizzes for <span class="title">{{ chapter.name }}</span>
@@ -10,10 +10,17 @@
   <div class="row">
     {% for quiz in quizzes %}
     <div class="mt-5">
-      <span><a href="">{{ quiz.title }}</a></span
+      <span
+        ><a
+          href="{{ url_for('question_list', chapter_name=chapter.name, subject_name=subject.name, quiz_title=quiz.title) }}"
+          >{{ quiz.title }}</a
+        ></span
       >&nbsp;&nbsp;&nbsp;Duration: {{ quiz.duration }}(mins)
       <span
-        ><form method="POST" action="">
+        ><form
+          method="POST"
+          action="{{ url_for('delete_Quiz', quiz_id=quiz.id) }}"
+        >
           <button type="submit" class="btn btn-outline-danger">
             Delete Quiz
           </button>
@@ -30,7 +37,9 @@
 <!-- adding Quizzes -->
 <div class="d-flex justify-content-center mt-5">
   <!-- add Quiz -->
-  <a href="" class="mt-5"
+  <a
+    href="{{ url_for('addQuiz', subject_name=subject.name, chapter_name=chapter.name) }}"
+    class="mt-5"
     ><button class="btn btn-outline-success">Add New Quiz</button></a
   >
   &nbsp;&nbsp;&nbsp;

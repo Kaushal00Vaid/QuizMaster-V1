@@ -1,0 +1,63 @@
+{% extends 'boilerplate.html' %} {% block body %}
+<div class="signup">
+  <div class="container">
+    <div class="row text-center total-signup mt-5">
+      <div class="col-6 p-5 left-outer-div mt-5">
+        <div class="left-inner">
+          <h1>Edit <span class="title">Quiz! {{quiz.title}}</span></h1>
+          <p class="text-muted signup-msg">Hello Master!</p>
+          <form
+            method="post"
+            action="{{ url_for('edit_quiz', subject_name=subject.name, chapter_name=chapter.name, quiz_title=quiz.title) }}"
+          >
+            <div class="mt-5 signup-form">
+              <label for="title" class="form-label"></label>
+              <input
+                type="text"
+                name="title"
+                class="form-control signup-input-fields"
+                id="title"
+                placeholder="Quiz Title"
+                value="{{quiz.title}}"
+              />
+            </div>
+            <div class="signup-form password-container">
+              <label for="date" class="form-label"></label>
+              <input
+                type="date"
+                name="date"
+                class="form-control signup-input-fields"
+                id="date"
+                placeholder="Enter Quiz Date"
+                value="{{quiz.date}}"
+              />
+            </div>
+            <div class="signup-form">
+              <label for="duration" class="form-label"></label>
+              <input
+                type="number"
+                name="duration"
+                class="form-control signup-input-fields"
+                id="duration"
+                placeholder="Quiz Duration(min)"
+                value="{{quiz.duration}}"
+              />
+            </div>
+            <button type="submit" class="mt-5 signup-btn">Edit Quiz</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-6 right-outer-div mt-5">
+        <div class="right-inner-div">
+          <img
+            src="{{url_for('static', filename='assets/coder_2.svg')}}"
+            class="right-img"
+          />
+          <h5>New Quiz, new challenge! Your users are waiting.</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

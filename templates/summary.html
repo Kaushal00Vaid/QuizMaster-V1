@@ -1,0 +1,34 @@
+{% extends 'boilerplate.html' %} {% block body %}
+<div class="container mt-5">
+  <h1 class="text-center mb-4">User Summary</h1>
+
+  {% if users %}
+  <table class="table table-striped table-hover table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Full Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Date of Birth</th>
+        <th scope="col">Qualifications</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %} {% if user.name != 'Admin' %}
+      <tr>
+        <td>{{ loop.index-1 }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.dob }}</td>
+        <td>{{ user.qualification }}</td>
+      </tr>
+      {% endif %} {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="alert alert-warning text-center" role="alert">
+    No users found.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
