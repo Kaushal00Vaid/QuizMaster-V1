@@ -106,24 +106,8 @@ def logout():
     flash('User logged out successfully',category='success')
     return redirect(url_for('home'))
     
-# admin dashboard
-@app.route('/adminDashboard')
-@admin_auth_required
-def adminDashboard():
-    subjects = Subject.query.all()
-    return render_template('subjects.html', subjects=subjects)
 
-# user dashboard
-@app.route('/userDashboard')
-@auth_required
-def userDashboard():
-    return "hello"
 
-# user profile
-@app.route('/profile')
-@auth_required
-def userProfile():
-    return render_template('userProfile.html', user=User.query.get(session['user_id']))
 
 # ------------------------- SUBJECT CRUD -----------------------
 
@@ -531,12 +515,101 @@ def edit_question(subject_name, chapter_name, quiz_title, question_id):
 # -----------------------------------------------------------------------
 
 # ------------------------- ADMIN SUMMARY _ USERS LIST ------------------------
+# admin dashboard
+@app.route('/adminDashboard')
+@admin_auth_required
+def adminDashboard():
+    subjects = Subject.query.all()
+    return render_template('subjects.html', subjects=subjects)
+
+# summary
 @app.route('/summary')
 @admin_auth_required
 def summary():
     users = User.query.all()
     return render_template('summary.html', users=users)
 
+# -----------------------------------------------------------------------
+
+# ------------------------- USER DASHBOARD & QUIZ ATTEMPT ------------------------
+# user dashboard --- subject --> chapters --> quizzes
+
+# show available subjects
+@app.route('/userDashboard')
+@auth_required
+def userDashboard():
+    subjects = Subject.query.all()
+    return render_template('userDashboard.html', subjects=subjects)
+
+# show available chapters in a subject
+@app.route('/userDashboard/<subject_id>')
+@auth_required
+def subject_chapters(subject_id):
+    subject = Subject.query.get(subject_id)
+    chapters = Chapter.query.filter_by(subject_id=subject_id).all()
+    return render_template('user_chapter.html', subject=subject,chapters=chapters)
+
+# show available quizzes in a chapter
+@app.route('/userDashboard/<subject_id>/<chapter_id>')
+@auth_required
+def chapter_quizzes(subject_id, chapter_id):
+    subject = Subject.query.get(subject_id)
+    chapter = Chapter.query.filter_by(id=chapter_id, subject_id=subject.id).first()
+    quizzes = Quiz.query.filter_by(chapter_id=chapter_id).all()
+    return render_template('user_quiz_list.html', chapter=chapter, quizzes=quizzes, subject=subject)
+
+# attempt quiz in chapters & see results after submit
+@app.route('/userDashboard/<subject_id>/<chapter_id>/<quiz_title>/attempt', methods=['GET','POST'])
+@auth_required
+def attempt_quiz(subject_id, chapter_id, quiz_title):
+    subject = Subject.query.get(subject_id)
+    chapter = Chapter.query.filter_by(id=chapter_id, subject_id=subject.id).first()
+    quiz = Quiz.query.filter_by(title=quiz_title, chapter_id=chapter_id).first()
+    questions = Question.query.filter_by(quiz_id=quiz.id).all()
+
+    # storing the selected answers and correct answers
+    answers = []
+
+    if request.method == 'POST':
+        total_marks = 0
+        scored_marks=0
+        for question in questions:
+            selected_answer = request.form.get(f"question{question.id}")
+            correct_answer = question.correct_option
+            is_correct = selected_answer == correct_answer
+            total_marks += question.marks
+
+            # if correct, storing in list
+            answers.append({
+                "question_title": question.questionTitle,
+                "selected_answer": selected_answer,
+                "correct_answer": correct_answer,
+                "is_correct": is_correct,
+                "marks": question.marks if is_correct else 0,
+                "option_a": question.option_a,
+                "option_b": question.option_b,
+                "option_c": question.option_c,
+                "option_d": question.option_d
+            })
+
+            if is_correct:
+                scored_marks += question.marks
+        
+        # storing score in db
+        user_score = UserQuizAttempt(user_id=session['user_id'],quiz_id=quiz.id,score=scored_marks)
+        db.session.add(user_score)
+        db.session.commit()
+
+        return render_template('user_quiz_result.html', chapter=chapter, quiz=quiz, answers=answers, scored_marks=scored_marks, total_marks=total_marks)
+
+    return render_template('user_quiz_attempt.html', chapter=chapter, quiz=quiz, questions=questions, subject=subject, duration=quiz.duration)
+
+
+# user profile
+@app.route('/profile')
+@auth_required
+def userProfile():
+    return render_template('userProfile.html', user=User.query.get(session['user_id']))
 
 # Define your 404 error handler
 @app.errorhandler(404)

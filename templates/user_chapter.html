@@ -1,0 +1,27 @@
+{% extends 'boilerplate.html' %} {% block body %}
+
+<!-- displaying chapters -->
+
+<h2 class="text-center mt-2">
+  Chapters for <span class="title">{{ subject.name }}</span>
+</h2>
+<p class="text-center mt-2">Subject Description - {{subject.description}}</p>
+
+<div class="container">
+  <div class="row">
+    {% for chapter in chapters %}
+    <div class="mt-5">
+      <span
+        ><a
+          href="{{ url_for('chapter_quizzes', chapter_id=chapter.id, subject_id=subject.id) }}"
+          >{{ chapter.name }}</a
+        ></span
+      >
+    </div>
+    <br />
+    {% else %}
+    <p>No chapters found for this subject.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'boilerplate.html' %} {% block body %}
+<div class="quiz-container">
+  <h2>Quiz: <span class="title">{{quiz.title}}</span></h2>
+  <form action="" method="POST">
+    {% for question in questions %}
+    <div class="quiz-question">
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="fw-bold fs-4">
+          Q{{ loop.index }}: {{ question.questionTitle }}
+        </span>
+        <span class="badge bg-primary">Marks: {{ question.marks }}</span>
+      </div>
+      <ul class="options">
+        <li>
+          <input
+            type="radio"
+            id="q{{ question.id }}-a"
+            name="question{{ question.id }}"
+            value="A"
+          />
+          <label for="q{{ question.id }}-a">{{ question.option_a }}</label>
+        </li>
+        <li>
+          <input
+            type="radio"
+            id="q{{ question.id }}-b"
+            name="question{{ question.id }}"
+            value="B"
+          />
+          <label for="q{{ question.id }}-b">{{ question.option_b }}</label>
+        </li>
+        <li>
+          <input
+            type="radio"
+            id="q{{ question.id }}-c"
+            name="question{{ question.id }}"
+            value="C"
+          />
+          <label for="q{{ question.id }}-c">{{ question.option_c }}</label>
+        </li>
+        <li>
+          <input
+            type="radio"
+            id="q{{ question.id }}-d"
+            name="question{{ question.id }}"
+            value="D"
+          />
+          <label for="q{{ question.id }}-d">{{ question.option_d }}</label>
+        </li>
+      </ul>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn-submit">Submit</button>
+  </form>
+</div>
+{% endblock %}
