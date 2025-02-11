@@ -73,7 +73,7 @@ class Question(db.Model):
     option_c = db.Column(db.String(255), nullable=False)
     option_d = db.Column(db.String(255), nullable=False)
     correct_option = db.Column(db.String(1), nullable=False) # 'A', 'B', 'C', 'D'
-    marks = db.Column(db.Integer, nullable=False)
+    marks = db.Column(db.Integer, nullable=False, default=1)
 
     quiz = db.relationship('Quiz', backref=db.backref('questions', lazy=True))
 
@@ -84,6 +84,7 @@ class UserQuizAttempt(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
     score = db.Column(db.Integer, nullable=False, default=0)
+    total = db.Column(db.Integer, nullable=False)
 
     user = db.relationship('User', backref=db.backref('quiz_attempts', lazy=True))
     quiz = db.relationship('Quiz', backref=db.backref('attempts', lazy=True))

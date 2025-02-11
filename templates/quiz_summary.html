@@ -1,0 +1,11 @@
+{% extends 'boilerplate.html' %} {% block body %}
+<h2 class="text-center mt-4">📊 Your Past Quiz Summary</h2>
+<div class="container mt-4">
+  <div class="d-flex justiy-content-center">
+    <img
+      src="data:image/png;base64,{{ img_data }}"
+      alt="Subject-wise Quiz Summary"
+    />
+  </div>
+</div>
+{% endblock %}

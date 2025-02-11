@@ -3,6 +3,12 @@ from  flask import Flask, render_template, request, redirect, url_for, flash, se
 from app import app,db
 from models import User, Subject, Chapter, Quiz, Question, UserQuizAttempt
 from datetime import datetime
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import io
+import base64
+from collections import Counter
 
 # ============================= ALL HELPER FUNCTIONS ============================
 
@@ -26,6 +32,27 @@ def auth_required(func):
             return redirect(url_for('login'))
         return func(*args, **kwargs)
     return inner
+
+# summary chart for user
+def generate_subject_chart(subjects, quiz_counts):
+    plt.figure(figsize=(6, 4))
+    
+    # Bar chart for subject-wise quiz count
+    x = range(len(subjects))
+    plt.bar(x, quiz_counts, color=['#4caf50', '#2196f3', '#f44336'], width=0.2)
+
+    plt.xlabel("Subjects")
+    plt.ylabel("No. of Quizzes Attempted")
+    plt.title("Subject-wise Quiz Summary")
+    plt.xticks(x, subjects, rotation=30, ha="right")
+
+    # Save the plot to a BytesIO buffer
+    img_io = io.BytesIO()
+    plt.savefig(img_io, format='png', bbox_inches="tight")
+    plt.close()
+    img_io.seek(0)
+
+    return base64.b64encode(img_io.getvalue()).decode()
 
 # ============================= ALL ROUTES =============================
 
@@ -596,7 +623,7 @@ def attempt_quiz(subject_id, chapter_id, quiz_title):
                 scored_marks += question.marks
         
         # storing score in db
-        user_score = UserQuizAttempt(user_id=session['user_id'],quiz_id=quiz.id,score=scored_marks)
+        user_score = UserQuizAttempt(user_id=session['user_id'],quiz_id=quiz.id,score=scored_marks, total=total_marks)
         db.session.add(user_score)
         db.session.commit()
 
@@ -604,12 +631,34 @@ def attempt_quiz(subject_id, chapter_id, quiz_title):
 
     return render_template('user_quiz_attempt.html', chapter=chapter, quiz=quiz, questions=questions, subject=subject, duration=quiz.duration)
 
-
 # user profile
 @app.route('/profile')
 @auth_required
 def userProfile():
     return render_template('userProfile.html', user=User.query.get(session['user_id']))
+
+# all past score display
+@app.route('/userDashboard/pastScoreDisplay')
+@auth_required
+def pastScoreDisplay():
+    user_id = session['user_id']
+    past_scores = UserQuizAttempt.query.filter_by(user_id=user_id).all()
+    return render_template('pastScoreDisplay.html', past_scores=past_scores)
+
+# summary chart
+@app.route('/userDashboard/summary')
+@auth_required
+def summaryChart():
+    user_id = session['user_id']
+    attempts = UserQuizAttempt.query.filter_by(user_id=user_id).all()
+
+    subject_quiz_count = Counter(attempt.quiz.chapter.subject.name for attempt in attempts)
+    subjects = list(subject_quiz_count.keys())
+    quiz_counts = list(subject_quiz_count.values())
+
+    img = generate_subject_chart(subjects, quiz_counts)
+    return render_template('quiz_summary.html', img_data=img)
+    
 
 # Define your 404 error handler
 @app.errorhandler(404)

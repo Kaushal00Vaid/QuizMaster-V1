@@ -245,3 +245,14 @@ label {
 .btn-submit:hover {
   background-color: #0056b3;
 }
+
+/* past score table */
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.badge {
+  font-size: 1rem;
+  padding: 6px 10px;
+}
