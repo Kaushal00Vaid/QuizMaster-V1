@@ -1,11 +1,13 @@
 {% extends 'boilerplate.html' %} {% block body %}
 <div class="quiz-container">
-  <h2>Quiz: <span class="title">{{quiz.title}}</span></h2>
+  <h1 class="text-center mb-3">
+    Quiz: <span class="title">{{quiz.title}}</span>
+  </h1>
   <form action="" method="POST">
     {% for question in questions %}
     <div class="quiz-question">
       <div class="d-flex justify-content-between align-items-center">
-        <span class="fw-bold fs-4">
+        <span class="fw-bold fs-5">
           Q{{ loop.index }}: {{ question.questionTitle }}
         </span>
         <span class="badge bg-primary">Marks: {{ question.marks }}</span>

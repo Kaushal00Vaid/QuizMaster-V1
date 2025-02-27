@@ -256,3 +256,16 @@ label {
   font-size: 1rem;
   padding: 6px 10px;
 }
+
+/* landing */
+.navbar {
+  background-color: #ebecef !important;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.landing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1.2);
+}

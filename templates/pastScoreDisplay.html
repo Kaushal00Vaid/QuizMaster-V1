@@ -1,7 +1,7 @@
 {% extends 'boilerplate.html' %} {% block body %}
 <h2 class="text-center mt-4">📊 Your Past Quiz Scores</h2>
 
-<div class="container mt-4">
+<div class="container mt-4 sub-con">
   <div class="table-responsive">
     <table class="table table-striped table-hover text-center rounded-4">
       <thead class="table-dark">
@@ -31,6 +31,11 @@
         {% endfor %}
       </tbody>
     </table>
+  </div>
+  <div class="mt-4 d-flex justify-content-center align-items-center">
+    <a href="{{ url_for('userDashboard') }}" class="btn btn-dark"
+      >Go Back to Dashboard</a
+    >
   </div>
 </div>
 {% endblock %}

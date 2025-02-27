@@ -1,11 +1,16 @@
 {% extends 'boilerplate.html' %} {% block body %}
 <h2 class="text-center mt-4">📊 Your Past Quiz Summary</h2>
-<div class="container mt-4">
-  <div class="d-flex justiy-content-center">
+<div class="container mt-4 sub-con">
+  <div class="d-flex justify-content-center align-items-center">
     <img
       src="data:image/png;base64,{{ img_data }}"
       alt="Subject-wise Quiz Summary"
     />
+  </div>
+  <div class="mt-4 d-flex justify-content-center align-items-center">
+    <a href="{{ url_for('userDashboard') }}" class="btn btn-dark"
+      >Go Back to Dashboard</a
+    >
   </div>
 </div>
 {% endblock %}

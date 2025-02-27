@@ -2,25 +2,57 @@
 
 <!-- displaying chapters -->
 
-<h2 class="text-center mt-2">
+<h1 class="text-center mt-2">
   Chapters for <span class="title">{{ subject.name }}</span>
-</h2>
-<p class="text-center mt-2">Subject Description - {{subject.description}}</p>
+</h1>
+<p class="text-center mt-2 signup-msg">
+  Subject Description - {{subject.description}}
+</p>
 
-<div class="container">
-  <div class="row">
+<div class="container sub-con">
+  <div class="row subject-row-card">
     {% for chapter in chapters %}
-    <div class="mt-5">
-      <span
-        ><a
-          href="{{ url_for('chapter_quizzes', chapter_id=chapter.id, subject_id=subject.id) }}"
-          >{{ chapter.name }}</a
-        ></span
+    <a
+      href="{{ url_for('chapter_quizzes', chapter_id=chapter.id, subject_id=chapter.subject.id) }}"
+      class="text-decoration-none col-6"
+    >
+      <div
+        class="card shadow-lg rounded-4 d-flex flex-row align-items-center mt-2 mb-2 mx-3"
+        style="
+          max-width: 600px;
+          background-color: #e7e7e7;
+          border: none;
+          transition: transform 0.3s ease;
+        "
+        onmouseover="this.style.transform='scale(1.05)'"
+        onmouseout="this.style.transform='scale(1)'"
       >
-    </div>
-    <br />
+        <!-- Image Section -->
+        <div class="col-4 p-3">
+          <img
+            src="../static/assets/chapter_icon_user.svg"
+            alt="Chapter Image"
+            class="img-fluid"
+          />
+        </div>
+        <!-- Content Section -->
+        <div class="col-8 p-3">
+          <h5 class="card-title fw-bold mb-2" style="color: #4c4c6d">
+            {{ chapter.name }}
+          </h5>
+          <p class="card-text mb-3" style="color: #8a8aab; font-size: 14px">
+            {{ chapter.description }}
+          </p>
+          <p class="mb-0" style="color: #6b6b90; font-size: 12px">
+            Created by <span class="fw-semibold">Admin</span>
+          </p>
+        </div>
+      </div>
+    </a>
     {% else %}
-    <p>No chapters found for this subject.</p>
+    <div class="alert alert-warning text-center" role="alert">
+      No chapters found.
+    </div>
     {% endfor %}
   </div>
 </div>

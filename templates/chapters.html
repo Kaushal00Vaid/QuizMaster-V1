@@ -2,28 +2,36 @@
 
 <!-- displaying chapters -->
 
-<h2 class="text-center mt-2">
+<h1 class="text-center mt-2">
   Chapters for <span class="title">{{ subject.name }}</span>
-</h2>
-<p class="text-center mt-2">Subject Description - {{subject.description}}</p>
+</h1>
+<p class="text-center mt-2 signup-msg">
+  Subject Description - {{subject.description}}
+</p>
 
-<div class="container">
-  <div class="row">
+<div class="container sub-con">
+  <div class="row subject-row">
     {% for chapter in chapters %}
-    <div class="mt-5">
-      <span
-        ><a
-          href="{{ url_for('quizzes_list', chapter_name=chapter.name, subject_name=subject.name) }}"
-          >{{ chapter.name }}</a
-        ></span
+    <div class="col-2 each-sub mt-3">
+      <a
+        href="{{ url_for('quizzes_list', chapter_name=chapter.name, subject_name=chapter.subject.name) }}"
+        ><img
+          src="{{url_for('static', filename='assets/iscellaneous_icons_9.svg')}}"
+          class="subject_folder"
+          style="width: 50%; margin-left: 20px"
+      /></a>
+      <br />
+      <a
+        href="{{ url_for('quizzes_list', chapter_name=chapter.name, subject_name=chapter.subject.name) }}"
+        ><b>{{ chapter.name }}</b></a
       >
       <span
         ><form
           method="POST"
-          class="d-flex"
+          class="d-flex justify-content-center mt-2"
           action="{{ url_for('delete_Chapter', chapter_id=chapter.id, chapter_name=chapter.name) }}"
         >
-          <button type="submit" class="btn btn-outline-danger">
+          <button type="submit" class="btn btn-outline-danger btn-sm">
             Delete Chapter
           </button>
         </form></span

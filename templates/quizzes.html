@@ -1,27 +1,36 @@
 {% extends 'boilerplate.html' %} {% block body %}
 <!-- displaying quizzes -->
 
-<h2 class="text-center mt-2">
+<h1 class="text-center mt-2">
   Quizzes for <span class="title">{{ chapter.name }}</span>
-</h2>
-<p class="text-center mt-2">Chapter Description - {{chapter.description}}</p>
+</h1>
+<p class="text-center mt-2 signup-msg">
+  Chapter Description - {{chapter.description}}
+</p>
 
-<div class="container">
-  <div class="row">
+<div class="container sub-con">
+  <div class="row subject-row">
     {% for quiz in quizzes %}
-    <div class="mt-5">
-      <span
-        ><a
-          href="{{ url_for('question_list', chapter_name=chapter.name, subject_name=subject.name, quiz_title=quiz.title) }}"
-          >{{ quiz.title }}</a
-        ></span
-      >&nbsp;&nbsp;&nbsp;Duration: {{ quiz.duration }}(mins)
+    <div class="col-2 each-sub mt-3">
+      <a
+        href="{{ url_for('question_list', chapter_name=quiz.chapter.name, subject_name=quiz.chapter.subject.name, quiz_title=quiz.title) }}"
+        ><img
+          src="{{url_for('static', filename='assets/Asset_93.svg')}}"
+          class="subject_folder"
+          style="width: 30%; margin-left: 5px"
+      /></a>
+      <br />
+      <a
+        href="{{ url_for('question_list', chapter_name=quiz.chapter.name, subject_name=quiz.chapter.subject.name, quiz_title=quiz.title) }}"
+        ><b>{{ quiz.title }}</b><br />Duration: {{ quiz.duration }}(mins)</a
+      >
       <span
         ><form
           method="POST"
+          class="d-flex justify-content-center mt-2"
           action="{{ url_for('delete_Quiz', quiz_id=quiz.id) }}"
         >
-          <button type="submit" class="btn btn-outline-danger">
+          <button type="submit" class="btn btn-outline-danger btn-sm">
             Delete Quiz
           </button>
         </form>

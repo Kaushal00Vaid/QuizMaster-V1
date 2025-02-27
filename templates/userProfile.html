@@ -1,14 +1,45 @@
 {% extends "boilerplate.html" %} {% block body %}
 
-<div class="container">
-  <div class="row">
-    <h1>Profile</h1>
-    <h3 class="text-muted">{{user.username}}</h3>
-    <h3>Your Profile Details...</h3>
-    <p>Full Name: {{user.name}}</p>
-    <p>Email: {{user.username}}</p>
-    <p>Qualifications: {{user.qualification}}</p>
-    <p>DOB: {{user.dob}}</p>
+<div class="container mt-5 sub-con">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="shadow-lg rounded-4 p-4">
+        <div class="text-center">
+          <img
+            src="{{url_for('static', filename='assets/ai_ball.svg')}}"
+            alt="User Avatar"
+            class="rounded-circle img-fluid"
+            style="
+              width: 120px;
+              height: 120px;
+              object-fit: contain;
+              background-color: #f8f9fa;
+              padding: 5px;
+            "
+          />
+          <h2 class="mt-3">{{ user.name }}</h2>
+          <p class="text-muted">{{ user.username }}</p>
+        </div>
+        <hr />
+        <div class="px-3">
+          <h5 class="fw-bold text-center">Profile Details</h5>
+          <p><strong>Email:</strong> {{ user.username }}</p>
+          <p><strong>Qualifications:</strong> {{ user.qualification }}</p>
+          <p><strong>Date of Birth:</strong> {{ user.dob }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-4 d-flex justify-content-center align-items-center">
+    {% if session['user_id'] != 1 %}
+    <a href="{{ url_for('userDashboard') }}" class="btn btn-dark"
+      >Go Back to Dashboard</a
+    >
+    {% else %}
+    <a href="{{ url_for('adminDashboard') }}" class="btn btn-dark"
+      >Go Back to Dashboard</a
+    >
+    {% endif %}
   </div>
 </div>
 

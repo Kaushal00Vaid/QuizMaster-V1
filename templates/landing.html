@@ -2,17 +2,12 @@
 
 <!-- hero section -->
 <nav class="navbar bg-body-tertiary">
-  <div class="container-fluid">
+  <div class="container-fluid d-flex">
     <div>
       <img
-        src="../static/assets/q-solid-icon.svg"
-        alt=""
-        style="
-          width: 10%;
-          filter: invert(16%) sepia(92%) saturate(3028%) hue-rotate(267deg)
-            brightness(102%) contrast(105%);
-        "
-      /><a class="navbar-brand">Gradely</a>
+        src="{{url_for('static', filename='assets/q-solid-icon.svg')}}"
+        style="width: 10%; filter: invert(1)"
+      /><a class="navbar-brand mx-3">Gradely</a>
     </div>
 
     <form class="d-flex">
@@ -40,5 +35,18 @@
     </form>
   </div>
 </nav>
-<h1>Hello to Landing Page</h1>
+<div class="landing text-center">
+  <h1>Welcome to <span class="title">GRADELY !!</span></h1>
+  <p class="signup-msg">Your GoTo Quiz App...</p>
+  {% if session['user_id'] != 1 %}
+  <a href="{{ url_for('userDashboard') }}" class="btn btn-dark"
+    >Go Back to Dashboard</a
+  >
+  {% else %}
+  <a href="{{ url_for('adminDashboard') }}" class="btn btn-dark"
+    >Go Back to Dashboard</a
+  >
+  {% endif %}
+</div>
+
 {% endblock %}

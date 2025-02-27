@@ -1,25 +1,58 @@
 {% extends 'boilerplate.html' %} {% block body %}
 <!-- displaying quizzes -->
 
-<h2 class="text-center mt-2">
+<h1 class="text-center mt-2">
   Quizzes for <span class="title">{{ chapter.name }}</span>
-</h2>
-<p class="text-center mt-2">Chapter Description - {{chapter.description}}</p>
+</h1>
+<p class="text-center mt-2 signup-msg">
+  Chapter Description - {{chapter.description}}
+</p>
 
-<div class="container">
-  <div class="row">
+<div class="container sub-con">
+  <div class="row subject-row-card">
     {% for quiz in quizzes %}
-    <div class="mt-5">
-      <span
-        ><a
-          href="{{ url_for('attempt_quiz', chapter_id=chapter.id, subject_id=subject.id, quiz_title=quiz.title) }}"
-          >{{ quiz.title }}</a
-        ></span
-      >&nbsp;&nbsp;&nbsp;Duration: {{ quiz.duration }}(mins)
-    </div>
-    <br />
+    <a
+      href="{{ url_for('attempt_quiz', chapter_id=quiz.chapter.id, subject_id=quiz.chapter.subject.id, quiz_title=quiz.title) }}"
+      class="text-decoration-none col-6"
+    >
+      <div
+        class="card shadow-lg rounded-4 d-flex flex-row align-items-center mt-2 mb-2 mx-3"
+        style="
+          max-width: 600px;
+          background-color: #e7e7e7;
+          border: none;
+          transition: transform 0.3s ease;
+        "
+        onmouseover="this.style.transform='scale(1.05)'"
+        onmouseout="this.style.transform='scale(1)'"
+      >
+        <!-- Image Section -->
+        <div class="col-4 p-3">
+          <img
+            src="{{url_for('static', filename='assets/robot.svg')}}"
+            alt="quiz Image"
+            class="img-fluid"
+            style="width: 60%; margin-left: 25%"
+          />
+        </div>
+        <!-- Content Section -->
+        <div class="col-8 p-3">
+          <h5 class="card-title fw-bold mb-2" style="color: #4c4c6d">
+            {{ quiz.title }}
+          </h5>
+          <p class="card-text mb-3" style="color: #8a8aab; font-size: 14px">
+            Duration: {{ quiz.duration }}(mins)
+          </p>
+          <p class="mb-0" style="color: #6b6b90; font-size: 12px">
+            Created on <span class="fw-semibold">{{quiz.date}}</span>
+          </p>
+        </div>
+      </div>
+    </a>
     {% else %}
-    <p>No quizzes found for this chapter.</p>
+    <div class="alert alert-warning text-center" role="alert">
+      No quizzes found.
+    </div>
     {% endfor %}
   </div>
 </div>

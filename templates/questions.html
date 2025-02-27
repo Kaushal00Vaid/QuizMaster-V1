@@ -1,14 +1,14 @@
 {% extends 'boilerplate.html' %} {% block body %}
 <!-- displaying questions -->
 
-<h2 class="text-center mt-2">
+<h1 class="text-center mt-2">
   Questions for <span class="title">{{ quiz.title }}</span>
-</h2>
-<p class="text-center mt-2">Quiz Date - {{quiz.date}}</p>
-<p class="text-center mt-2">Quiz Duration - {{quiz.duration}}mins</p>
+</h1>
+<p class="text-center mt-2 signup-msg">Quiz Date - {{quiz.date}}</p>
+<p class="text-center mt-2 signup-msg">Quiz Duration - {{quiz.duration}}mins</p>
 
-<div class="container">
-  <div class="row">
+<div class="container sub-con">
+  <div class="row subject-row">
     {% for question in questions %}
     <div class="mt-5 p-3 border border-secondary rounded">
       <!-- Question Title and Marks -->
@@ -46,7 +46,7 @@
       <div class="mt-2 d-flex justify-content-between">
         <a
           href="{{ url_for('edit_question', subject_name=subject.name, chapter_name=chapter.name,quiz_title=quiz.title,question_id=question.id) }}"
-          class="btn btn-outline-warning"
+          class="btn btn-outline-primary"
         >
           Edit Question
         </a>
