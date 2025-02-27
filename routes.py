@@ -387,6 +387,9 @@ def delete_Quiz(quiz_id):
     for question in questions:
         # Delete all questions related to this quiz
         Question.query.filter_by(quiz_id=quiz.id).delete()
+
+    # deleting user_quiz_attempt tuples
+    UserQuizAttempt.query.filter_by(quiz_id=quiz.id).delete()
         
     # Delete the quiz
     db.session.delete(quiz)
