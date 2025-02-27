@@ -31,8 +31,11 @@
         <input
           class="form-control me-2"
           type="search"
+          id="query"
+          name="query"
           placeholder="Search"
           aria-label="Search"
+          value="{{query or ''}}"
         />
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
@@ -44,8 +47,9 @@
   </div>
 </nav>
 
+<!-- without search -->
+{% if not query %}
 <!-- displaying subjects -->
-
 <h2 class="text-center mt-2">Subjects</h2>
 <div class="container sub-con">
   <div class="row subject-row">
@@ -69,4 +73,161 @@
     ><button class="btn btn-outline-success">Add New Subject</button></a
   >
 </div>
-{% endblock %}
+
+<!-- searched content -->
+{% else %}
+
+<!-- subject -->
+<h1 class="text-center mt-2"><span class="title">Subjects</span> Available</h1>
+{% if subjects %}
+<div class="container sub-con">
+  <div class="row subject-row">
+    {% for subject in subjects %}
+    <div class="col-1 each-sub mt-3">
+      <a href="{{ url_for('chapter_list', subject_name=subject.name) }}"
+        ><img src="../static/assets/folder_icon.png" class="subject_folder"
+      /></a>
+      <br />
+      <a href="{{ url_for('chapter_list', subject_name=subject.name) }}"
+        >{{ subject.name }}</a
+      >
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="alert alert-warning text-center" role="alert">
+  No subjects found.
+</div>
+{% endif %}
+
+<!-- chapters -->
+<h1 class="text-center mt-2"><span class="title">Chapters</span> Available</h1>
+{% if chapters %}
+<div class="container">
+  <div class="row">
+    {% for chapter in chapters %}
+    <div class="mt-5">
+      <span
+        ><a
+          href="{{ url_for('quizzes_list', chapter_name=chapter.name, subject_name=chapter.subject.name) }}"
+          >{{ chapter.name }}</a
+        ></span
+      >
+    </div>
+    <br />
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="alert alert-warning text-center" role="alert">
+  No chapters found.
+</div>
+{% endif %}
+
+<!-- quizzes -->
+<h1 class="text-center mt-2"><span class="title">Quizzes</span> Available</h1>
+{% if quizzes %}
+<div class="container">
+  <div class="row">
+    {% for quiz in quizzes %}
+    <div class="mt-5">
+      <span
+        ><a
+          href="{{ url_for('question_list', chapter_name=quiz.chapter.name, subject_name=quiz.chapter.subject.name, quiz_title=quiz.title) }}"
+          >{{ quiz.title }}</a
+        ></span
+      ><br />Duration: {{ quiz.duration }}(mins)
+    </div>
+    <br />
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div class="alert alert-warning text-center" role="alert">
+  No quizzes found.
+</div>
+{% endif %}
+
+<!-- users -->
+<h1 class="text-center mt-2"><span class="title">Users</span> Available</h1>
+{% if users %}
+<div class="container">
+  <div class="row">
+    <table class="table table-striped table-hover table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Full Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Date of Birth</th>
+          <th scope="col">Qualifications</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %} {% if user.name != 'Admin' %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ user.name }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.dob }}</td>
+          <td>{{ user.qualification }}</td>
+        </tr>
+        {% endif %} {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="alert alert-warning text-center" role="alert">No users found.</div>
+
+{% endif %}
+
+<!-- questions -->
+<h1 class="text-center mt-2"><span class="title">Questions</span></h1>
+{% if questions %}
+<div class="container">
+  <div class="row">
+    {% for question in questions %}
+    <div class="mt-5 p-3 border border-secondary rounded">
+      <!-- Question Title and Marks -->
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="fw-bold">
+          Q{{ loop.index }}: {{ question.questionTitle }}
+        </span>
+        <span class="badge bg-primary">Marks: {{ question.marks }}</span>
+      </div>
+
+      <!-- Options -->
+      <div class="mt-3">
+        <div
+          class="p-2 {{ 'bg-success text-white' if question.correct_option == 'A' else '' }}"
+        >
+          A. {{ question.option_a }}
+        </div>
+        <div
+          class="p-2 {{ 'bg-success text-white' if question.correct_option == 'B' else '' }}"
+        >
+          B. {{ question.option_b }}
+        </div>
+        <div
+          class="p-2 {{ 'bg-success text-white' if question.correct_option == 'C' else '' }}"
+        >
+          C. {{ question.option_c }}
+        </div>
+        <div
+          class="p-2 {{ 'bg-success text-white' if question.correct_option == 'D' else '' }}"
+        >
+          D. {{ question.option_d }}
+        </div>
+      </div>
+    </div>
+    <br />
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-warning text-center" role="alert">
+    No questions found.
+  </div>
+  {% endif %} {% endif %} {% endblock %}
+</div>

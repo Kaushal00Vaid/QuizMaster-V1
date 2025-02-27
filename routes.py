@@ -39,7 +39,7 @@ def generate_subject_chart(subjects, quiz_counts):
     
     # Bar chart for subject-wise quiz count
     x = range(len(subjects))
-    plt.bar(x, quiz_counts, color=['#4caf50', '#2196f3', '#f44336'], width=0.2)
+    plt.bar(x, quiz_counts, color=['#4caf50', '#2196f3', '#f44336'], width=0.1)
 
     plt.xlabel("Subjects")
     plt.ylabel("No. of Quizzes Attempted")
@@ -441,6 +441,9 @@ def edit_quiz(subject_name, chapter_name, quiz_title):
 @admin_auth_required
 def question_list(chapter_name,subject_name,quiz_title):
     subject = Subject.query.filter_by(name=subject_name).first()
+    if not subject:
+        flash('Subject not found', category='danger')
+        return redirect(url_for('adminDashboard'))
     chapter = Chapter.query.filter_by(name=chapter_name, subject_id=subject.id).first()
     quiz = Quiz.query.filter_by(title=quiz_title).first()
     if not subject or not chapter or not quiz:
@@ -547,7 +550,16 @@ def edit_question(subject_name, chapter_name, quiz_title, question_id):
 @admin_auth_required
 def adminDashboard():
     subjects = Subject.query.all()
-    return render_template('subjects.html', subjects=subjects)
+    query = request.args.get('query')
+    if not query:
+        return render_template('subjects.html', subjects=subjects)
+    else:
+        users = User.query.filter(User.username.like(query + '%')).all()
+        subjects = Subject.query.filter(Subject.name.like(query + '%')).all()
+        chapters = Chapter.query.join(Subject, isouter=True).filter(Chapter.name.like(f'{query}%')).all()
+        quizzes = Quiz.query.join(Chapter).filter(Quiz.title.like(f'{query}%')).all()
+        questions = Question.query.filter(Question.questionTitle.like(query + '%')).all()
+        return render_template('subjects.html', subjects=subjects, users=users, quizzes=quizzes, questions=questions, query=query, chapters=chapters)
 
 # summary
 @app.route('/summary')
@@ -566,7 +578,15 @@ def summary():
 @auth_required
 def userDashboard():
     subjects = Subject.query.all()
-    return render_template('userDashboard.html', subjects=subjects)
+    query = request.args.get('search')
+    if not query:
+        return render_template('userDashboard.html', subjects=subjects, chapters=[], quizzes=[])
+    else:
+        subjects = Subject.query.filter(Subject.name.like(query + '%')).all()
+        chapters = Chapter.query.join(Subject, isouter=True).filter(Chapter.name.like(f'{query}%')).all()
+        quizzes = Quiz.query.join(Chapter).filter(Quiz.title.like(f'{query}%')).all()
+        return render_template('userDashboard.html', subjects=subjects, chapters=chapters, quizzes=quizzes, query=query)
+
 
 # show available chapters in a subject
 @app.route('/userDashboard/<subject_id>')
