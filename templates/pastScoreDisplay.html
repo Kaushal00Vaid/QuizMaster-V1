@@ -14,7 +14,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for attempt in past_scores %}
+        {% for attempt in past_scores %} {% if attempt.total > 0 %}
         <tr>
           <td>{{ loop.index }}</td>
           <td>{{ attempt.quiz.title }}</td>
@@ -28,7 +28,7 @@
           <td>{{attempt.total}}</td>
           <td>{{ (attempt.score / attempt.total * 100) | round(2) }}%</td>
         </tr>
-        {% endfor %}
+        {% endif %} {% endfor %}
       </tbody>
     </table>
   </div>

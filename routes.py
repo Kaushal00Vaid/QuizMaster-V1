@@ -183,6 +183,7 @@ def delete_Subject(subject_name, subject_id):
 
         for quiz in quizzes:
             # Delete all questions related to this quiz
+            UserQuizAttempt.query.filter_by(quiz_id=quiz.id).delete()
             Question.query.filter_by(quiz_id=quiz.id).delete()
             
             # Delete the quiz
@@ -280,6 +281,7 @@ def delete_Chapter(chapter_name, chapter_id):
     quizzes = Quiz.query.filter_by(chapter_id=chapter.id).all()
     for quiz in quizzes:
         # Delete all questions related to this quiz
+        UserQuizAttempt.query.filter_by(quiz_id=quiz.id).delete()
         Question.query.filter_by(quiz_id=quiz.id).delete()
         
         # Delete the quiz
@@ -390,6 +392,7 @@ def delete_Quiz(quiz_id):
 
     # deleting user_quiz_attempt tuples
     UserQuizAttempt.query.filter_by(quiz_id=quiz.id).delete()
+    db.session.commit()
         
     # Delete the quiz
     db.session.delete(quiz)
